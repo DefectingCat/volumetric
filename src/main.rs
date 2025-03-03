@@ -151,7 +151,11 @@ fn scene_colliders(
                 continue;
             };
             commands.spawn((
-                Collider::from_bevy_mesh(mesh, &ComputedColliderShape::ConvexHull).unwrap(),
+                Collider::from_bevy_mesh(
+                    mesh,
+                    &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
+                )
+                .unwrap(),
                 RigidBody::Fixed,
                 node.transform,
             ));

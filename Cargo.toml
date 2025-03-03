@@ -1,3 +1,5 @@
+cargo-features = ["profile-rustflags", "trim-paths"]
+
 [package]
 name = "volumetric-fog"
 version = "0.1.0"
@@ -13,3 +15,21 @@ bevy = { version = "0.15", features = [
 ] }
 bevy_fps_controller = "0.15.0"
 bevy_rapier3d = { version = "0.28.0", features = ["simd-stable"] }
+
+[profile.dev]
+incremental = true          # Compile your binary in smaller steps.
+rustflags = ["-Zthreads=8"] # Better compile performance.
+
+[profile.release]
+codegen-units = 1                                                           # Allows LLVM to perform better optimization.
+lto = true                                                                  # Enables link-time-optimizations.
+opt-level = 3                                                               # Prioritizes small binary size. Use `3` if you prefer speed.
+panic = "abort"                                                             # Higher performance by disabling panic handlers.
+strip = true                                                                # Ensures debug symbols are removed.
+trim-paths = "all"                                                          # Removes potentially privileged information from your binaries.
+rustflags = ["-Cdebuginfo=0", "-C", "target-cpu=native", "-Z", "threads=8"]
+
+[profile.web]
+inherits = "release"
+opt-level = "s"
+rustflags = ["-Cdebuginfo=0", "-Z", "threads=8"]
