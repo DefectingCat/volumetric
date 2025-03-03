@@ -21,17 +21,19 @@ fn main() {
         .insert_resource(ClearColor(Color::linear_rgb(0.83, 0.96, 0.96)))
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugins(RapierDebugRenderPlugin::default())
+        // .add_plugins(RapierDebugRenderPlugin::default())
         .add_plugins(FpsControllerPlugin)
         .add_systems(Startup, setup)
         .add_systems(Update, (manage_cursor, scene_colliders, respawn))
         .run();
 }
 
+/// 场景初始化
 fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<AssetServer>) {
     let mut window = window.single_mut();
     window.title = String::from("Minimal FPS Controller Example");
 
+    // 平行光
     commands.spawn((
         DirectionalLight {
             illuminance: light_consts::lux::FULL_DAYLIGHT,
@@ -98,7 +100,7 @@ fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<Ass
     ));
 
     commands.insert_resource(MainScene {
-        handle: assets.load("models/Playground/playground.glb"),
+        handle: assets.load("models/Exhibition1-V1/model.glb"),
         is_loaded: false,
     });
 }
