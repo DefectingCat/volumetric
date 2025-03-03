@@ -5,11 +5,11 @@ edition = "2024"
 
 [dependencies]
 bevy = { version = "0.15", features = [
-  "jpeg",
-  "ktx2",
-  "png",
-  "hdr",
-  "default",
+    "jpeg",
+    "ktx2",
+    "png",
+    "hdr",
+    "default",
 ] }
 bevy_fps_controller = "0.15.0"
-bevy_rapier3d = { version = "0.29.0", features = ["simd-stable"] }
+bevy_rapier3d = { version = "0.28.0", features = ["simd-stable"] }

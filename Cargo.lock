@@ -576,7 +576,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6805c3e6cc4ea1843e98ef0419da8648ccd1a4f7fadb4ca6bcab19be261a4cbf"
 dependencies = [
  "bevy",
- "bevy_rapier3d 0.28.0",
+ "bevy_rapier3d",
 ]
 
 [[package]]
@@ -903,20 +903,7 @@ dependencies = [
  "bitflags 2.9.0",
  "log",
  "nalgebra",
- "rapier3d 0.22.0",
-]
-
-[[package]]
-name = "bevy_rapier3d"
-version = "0.29.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85f3856331b3f75e900db0fd47c34d7e63dc7f736f455e9d0e6d775a24099c37"
-dependencies = [
- "bevy",
- "bitflags 2.9.0",
- "log",
- "nalgebra",
- "rapier3d 0.23.0",
+ "rapier3d",
 ]
 
 [[package]]
@@ -3299,32 +3286,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "parry3d"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecb572cea5c76b06bc744aaefdbb9e6ea9e5695f50f79c0227bddecd6ec925a4"
-dependencies = [
- "approx",
- "arrayvec",
- "bitflags 2.9.0",
- "downcast-rs",
- "either",
- "ena",
- "log",
- "nalgebra",
- "num-derive",
- "num-traits",
- "ordered-float",
- "rstar",
- "rustc-hash 2.1.1",
- "simba",
- "slab",
- "smallvec",
- "spade",
- "thiserror",
-]
-
-[[package]]
 name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3476,19 +3437,6 @@ name = "profiling"
 version = "1.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afbdc74edc00b6f6a218ca6a5364d6226a259d4b8ea1af4a0ea063f27e179f4d"
-dependencies = [
- "profiling-procmacros",
-]
-
-[[package]]
-name = "profiling-procmacros"
-version = "1.0.16"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a65f2e60fbf1063868558d69c6beacf412dc755f9fc020f514b7955fc914fe30"
-dependencies = [
- "quote",
- "syn",
-]
 
 [[package]]
 name = "quote"
@@ -3574,31 +3522,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "ordered-float",
- "parry3d 0.17.5",
- "rustc-hash 2.1.1",
- "simba",
- "thiserror",
-]
-
-[[package]]
-name = "rapier3d"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57a93155032849cf4ae33481c60c8d1fd2a8ded14553e10539aaf1d401b65ecc"
-dependencies = [
- "approx",
- "arrayvec",
- "bit-vec 0.7.0",
- "bitflags 2.9.0",
- "crossbeam",
- "downcast-rs",
- "log",
- "nalgebra",
- "num-derive",
- "num-traits",
- "ordered-float",
- "parry3d 0.18.0",
- "profiling",
+ "parry3d",
  "rustc-hash 2.1.1",
  "simba",
  "thiserror",
@@ -4372,7 +4296,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy_fps_controller",
- "bevy_rapier3d 0.29.0",
+ "bevy_rapier3d",
 ]
 
 [[package]]

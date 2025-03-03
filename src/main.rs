@@ -1,36 +1,51 @@
 use std::f32::consts::TAU;
 
 use bevy::{
-    core_pipeline::Skybox,
-    gltf::{GltfMesh, GltfNode},
-    pbr::VolumetricLight,
+    gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
     render::camera::Exposure,
     window::CursorGrabMode,
 };
-use bevy_fps_controller::controller::*;
 use bevy_rapier3d::prelude::*;
+
+use bevy_fps_controller::controller::*;
 
 const SPAWN_POINT: Vec3 = Vec3::new(0.0, 1.625, 0.0);
 
 fn main() {
     App::new()
+        .insert_resource(AmbientLight {
+            color: Color::WHITE,
+            brightness: 10000.0,
+        })
+        .insert_resource(ClearColor(Color::linear_rgb(0.83, 0.96, 0.96)))
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(RapierDebugRenderPlugin::default())
         .add_plugins(FpsControllerPlugin)
-        .insert_resource(AmbientLight::default())
-        .insert_resource(ClearColor(Color::linear_rgb(0.83, 0.96, 0.96)))
         .add_systems(Startup, setup)
         .add_systems(Update, (manage_cursor, scene_colliders, respawn))
         .run();
 }
 
-/// Initializes the scene.
-fn setup(mut commands: Commands, mut window: Query<&mut Window>, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<AssetServer>) {
     let mut window = window.single_mut();
     window.title = String::from("Minimal FPS Controller Example");
 
+    commands.spawn((
+        DirectionalLight {
+            illuminance: light_consts::lux::FULL_DAYLIGHT,
+            shadows_enabled: true,
+            ..default()
+        },
+        Transform::from_xyz(4.0, 7.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+    ));
+
+    // Note that we have two entities for the player
+    // One is a "logical" player that handles the physics computation and collision
+    // The other is a "render" player that is what is displayed to the user
+    // This distinction is useful for later on if you want to add multiplayer,
+    // where often time these two ideas are not exactly synced up
     let height = 3.0;
     let logical_entity = commands
         .spawn((
@@ -71,6 +86,7 @@ fn setup(mut commands: Commands, mut window: Query<&mut Window>, asset_server: R
             height_offset: -0.5,
         })
         .id();
+
     commands.spawn((
         Camera3d::default(),
         Projection::Perspective(PerspectiveProjection {
@@ -80,40 +96,11 @@ fn setup(mut commands: Commands, mut window: Query<&mut Window>, asset_server: R
         Exposure::SUNLIGHT,
         RenderPlayer { logical_entity },
     ));
-    commands.spawn(Skybox {
-        image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-        brightness: 1000.0,
-        ..default()
-    });
-    // .insert(VolumetricFog {
-    //     // This value is explicitly set to 0 since we have no environment map light
-    //     ambient_intensity: 0.0,
-    //     ..default()
-    // });
 
-    // Add the spot light
-    commands.spawn((
-        Transform::from_xyz(-1.8, 3.9, -2.7).looking_at(Vec3::ZERO, Vec3::Y),
-        SpotLight {
-            intensity: 5000.0, // lumens
-            color: Color::WHITE,
-            shadows_enabled: true,
-            inner_angle: 0.76,
-            outer_angle: 0.94,
-            ..default()
-        },
-        VolumetricLight,
-    ));
-
-    // Spawn the glTF scene.
     commands.insert_resource(MainScene {
-        handle: asset_server.load("models/Playground/playground.glb"),
+        handle: assets.load("models/Playground/playground.glb"),
         is_loaded: false,
     });
-
-    // commands.spawn(SceneRoot(asset_server.load(
-    //     GltfAssetLabel::Scene(0).from_asset("models/Exhibition1-V1/model.gltf"),
-    // )));
 }
 
 fn respawn(mut query: Query<(&mut Transform, &mut Velocity)>) {
