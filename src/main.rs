@@ -133,30 +133,31 @@ fn scene_colliders(
     }
 
     let gltf = gltf_assets.get(&main_scene.handle);
-
-    if let Some(gltf) = gltf {
-        let scene = gltf.scenes.first().unwrap().clone();
-        commands.spawn(SceneRoot(scene));
-        for node in &gltf.nodes {
-            let node = gltf_node_assets.get(node).unwrap();
-            if let Some(gltf_mesh) = node.mesh.clone() {
-                let gltf_mesh = gltf_mesh_assets.get(&gltf_mesh).unwrap();
-                for mesh_primitive in &gltf_mesh.primitives {
-                    let mesh = mesh_assets.get(&mesh_primitive.mesh).unwrap();
-                    commands.spawn((
-                        Collider::from_bevy_mesh(
-                            mesh,
-                            &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
-                        )
-                        .unwrap(),
-                        RigidBody::Fixed,
-                        node.transform,
-                    ));
-                }
-            }
+    let Some(gltf) = gltf else {
+        return;
+    };
+    let scene = gltf.scenes.first().unwrap().clone();
+    commands.spawn(SceneRoot(scene));
+    for node in &gltf.nodes {
+        let Some(node) = gltf_node_assets.get(node) else {
+            continue;
+        };
+        let Some(gltf_mesh) = node.mesh.clone() else {
+            continue;
+        };
+        let gltf_mesh = gltf_mesh_assets.get(&gltf_mesh).unwrap();
+        for mesh_primitive in &gltf_mesh.primitives {
+            let Some(mesh) = mesh_assets.get(&mesh_primitive.mesh) else {
+                continue;
+            };
+            commands.spawn((
+                Collider::from_bevy_mesh(mesh, &ComputedColliderShape::ConvexHull).unwrap(),
+                RigidBody::Fixed,
+                node.transform,
+            ));
         }
-        main_scene.is_loaded = true;
     }
+    main_scene.is_loaded = true;
 }
 
 fn manage_cursor(
