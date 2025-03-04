@@ -13,8 +13,13 @@ bevy = { version = "0.15", features = [
     "hdr",
     "default",
 ] }
+bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 bevy_fps_controller = "0.15.0"
-bevy_rapier3d = { version = "0.28.0", features = ["simd-stable"] }
+bevy_rapier3d = { version = "0.28.0", features = [
+    "simd-nightly",
+    "parallel",
+    "wasm-bindgen",
+] }
 
 [profile.dev]
 incremental = true          # Compile your binary in smaller steps.

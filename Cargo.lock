@@ -570,6 +570,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_flycam"
+version = "0.15.0"
+source = "git+https://github.com/sburris0/bevy_flycam#14374d95ca73d9061401f232b55c766aa81ba082"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "bevy_fps_controller"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2433,6 +2441,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "instant"
+version = "0.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0242819d153cba4b4b05a5a8f2a7e9bbf97b6055b2a002b395c96b5ff3c0222"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "io-kit-sys"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3517,12 +3537,14 @@ dependencies = [
  "bitflags 2.9.0",
  "crossbeam",
  "downcast-rs",
+ "instant",
  "log",
  "nalgebra",
  "num-derive",
  "num-traits",
  "ordered-float",
  "parry3d",
+ "rayon",
  "rustc-hash 2.1.1",
  "simba",
  "thiserror",
@@ -4295,6 +4317,7 @@ name = "volumetric-fog"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_flycam",
  "bevy_fps_controller",
  "bevy_rapier3d",
 ]
