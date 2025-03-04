@@ -21,7 +21,7 @@ fn main() {
         .insert_resource(ClearColor(Color::linear_rgb(0.83, 0.96, 0.96)))
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        // .add_plugins(RapierDebugRenderPlugin::default())
+        .add_plugins(RapierDebugRenderPlugin::default())
         .add_plugins(FpsControllerPlugin)
         .add_systems(Startup, setup)
         .add_systems(Update, (manage_cursor, scene_colliders, respawn))
@@ -100,11 +100,12 @@ fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<Ass
     ));
 
     commands.insert_resource(MainScene {
-        handle: assets.load("models/Exhibition1-V1/model.glb"),
+        handle: assets.load("models/after-the-rain-vr-sound/Whitechapel.glb"),
         is_loaded: false,
     });
 }
 
+/// 重生
 fn respawn(mut query: Query<(&mut Transform, &mut Velocity)>) {
     for (mut transform, mut velocity) in &mut query {
         if transform.translation.y > -50.0 {
@@ -122,6 +123,7 @@ struct MainScene {
     is_loaded: bool,
 }
 
+/// 场景碰撞体
 fn scene_colliders(
     mut commands: Commands,
     mut main_scene: ResMut<MainScene>,
@@ -138,29 +140,37 @@ fn scene_colliders(
     let Some(gltf) = gltf else {
         return;
     };
-    let scene = gltf.scenes.first().unwrap().clone();
-    commands.spawn(SceneRoot(scene));
+    let Some(scene) = gltf.scenes.first() else {
+        error!("No scenes found in gltf");
+        return;
+    };
+    commands.spawn(SceneRoot(scene.clone()));
     for node in &gltf.nodes {
         let Some(node) = gltf_node_assets.get(node) else {
             continue;
         };
+        if !node.name.ends_with("_collision") {
+            return;
+        }
         let Some(gltf_mesh) = node.mesh.clone() else {
             continue;
         };
-        let gltf_mesh = gltf_mesh_assets.get(&gltf_mesh).unwrap();
+        let Some(gltf_mesh) = gltf_mesh_assets.get(&gltf_mesh) else {
+            continue;
+        };
         for mesh_primitive in &gltf_mesh.primitives {
             let Some(mesh) = mesh_assets.get(&mesh_primitive.mesh) else {
                 continue;
             };
-            commands.spawn((
-                Collider::from_bevy_mesh(
-                    mesh,
-                    &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
-                )
-                .unwrap(),
-                RigidBody::Fixed,
-                node.transform,
-            ));
+            let collider = Collider::from_bevy_mesh(
+                mesh,
+                &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
+            );
+            let Some(collider) = collider else {
+                error!("Failed to create collider from mesh");
+                continue;
+            };
+            commands.spawn((collider, RigidBody::Fixed, node.transform));
         }
     }
     main_scene.is_loaded = true;
