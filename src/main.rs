@@ -33,9 +33,6 @@ fn main() {
 /// 第一人称相机，受重力影响
 #[derive(Component)]
 struct MainCamera;
-/// 第一人称相机，不受重力影响
-#[derive(Component)]
-struct FreeCamera;
 
 /// 场景初始化
 fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<AssetServer>) {
@@ -115,7 +112,7 @@ fn setup(mut commands: Commands, mut window: Query<&mut Window>, assets: Res<Ass
             fov: TAU / 5.0,
             ..default()
         }),
-        FreeCamera,
+        FlyCam,
     ));
 
     commands.insert_resource(MainScene {
@@ -177,7 +174,7 @@ fn scene_colliders(
             continue;
         };
         if !node.name.ends_with("_collision") {
-            return;
+            continue;
         }
         let Some(gltf_mesh) = node.mesh.clone() else {
             continue;
@@ -189,15 +186,15 @@ fn scene_colliders(
             let Some(mesh) = mesh_assets.get(&mesh_primitive.mesh) else {
                 continue;
             };
-            // let collider = Collider::from_bevy_mesh(
-            //     mesh,
-            //     &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
-            // );
-            // let Some(collider) = collider else {
-            //     error!("Failed to create collider from mesh");
-            //     continue;
-            // };
-            // commands.spawn((collider, RigidBody::Fixed, node.transform));
+            let collider = Collider::from_bevy_mesh(
+                mesh,
+                &ComputedColliderShape::TriMesh(TriMeshFlags::all()),
+            );
+            let Some(collider) = collider else {
+                error!("Failed to create collider from mesh");
+                continue;
+            };
+            commands.spawn((collider, RigidBody::Fixed, node.transform));
         }
     }
     main_scene.is_loaded = true;
